@@ -17,25 +17,25 @@ source("solveGridWorld.R")
 # #############################################################################
 
 # step 2 # Add Up Button
-# ############################################################################
-# # Using reactive values to update plot after button event
-# 
-# shinyServer(function(input,output){
-#   # reactiveValues is used for holding variables that will be updated and passed between functions
-#   game <- reactiveValues()
-#   game$g1 <- newGrid()
-#   # creating the event button that will update the game
-#   observeEvent(input$upButton,{
-#     ns <- nextStep(1,game$g1)
-#     game$g1 <- ns$g
-#   })
-#   
-#   output$grid <- renderPlot({   
-#     plotGrid(game$g1,showState = TRUE)
-#   })
-# })
-# 
-# # #############################################################################
+############################################################################
+# Using reactive values to update plot after button event
+
+shinyServer(function(input,output){
+  # reactiveValues is used for holding variables that will be updated and passed between functions
+  game <- reactiveValues()
+  game$g1 <- newGrid()
+  # creating the event button that will update the game
+  observeEvent(input$upButton,{
+    ns <- nextStep(1,game$g1)
+    game$g1 <- ns$g
+  })
+  
+  output$grid <- renderPlot({   
+    plotGrid(game$g1,showState = TRUE)
+  })
+})
+
+# #############################################################################
 
 # Step 3 # More Buttons
 # #############################################################################
@@ -421,71 +421,71 @@ source("solveGridWorld.R")
 # #############################################################################
 
 # Step 10 Add solver
-#############################################################################
-
-shinyServer(function(input,output){
-  
-  game <- reactiveValues()
-  game$g1 <- newGrid()
-  game$score <- 0
-  game$results <- data.frame(Try = "Start", Action = "NA", Reward = 0, Score = 0, stringsAsFactors = F)
-  game$policy <- NULL
-  
-  observeEvent(input$upButton,{
-    ns <- nextStep(1,game$g1)
-    game$g1 <- ns$g
-    game$score <- game$score + game$g1$r[game$g1$s[1],game$g1$s[2]]
-    game$results <- rbind(c("Up", ns$name, game$g1$r[game$g1$s[1],game$g1$s[2]], game$score), game$results)
-  })
-  
-  observeEvent(input$leftButton,{
-    ns <- nextStep(4,game$g1)
-    game$g1 <- ns$g
-    game$score <- game$score + game$g1$r[game$g1$s[1],game$g1$s[2]]
-    game$results <- rbind(c("Left", ns$name, game$g1$r[game$g1$s[1],game$g1$s[2]], game$score), game$results)
-  })
-  
-  observeEvent(input$rightButton,{
-    ns <- nextStep(2,game$g1)
-    game$g1 <- ns$g
-    game$score <- game$score + game$g1$r[game$g1$s[1],game$g1$s[2]]
-    game$results <- rbind(c("Right", ns$name, game$g1$r[game$g1$s[1],game$g1$s[2]], game$score), game$results)
-  })
-  
-  observeEvent(input$downButton,{
-    ns <- nextStep(3,game$g1)
-    game$g1 <- ns$g
-    game$score <- game$score + game$g1$r[game$g1$s[1],game$g1$s[2]]
-    game$results <- rbind(c("Down", ns$name, game$g1$r[game$g1$s[1],game$g1$s[2]], game$score), game$results)
-  })
-  
-  observeEvent(input$resetButton,{
-    game$g1 <- newGrid()
-    game$score <- 0
-    game$results <- data.frame(try = "start", action = "NA", reward = 0, Score = 0, stringsAsFactors = F)
-  })
-  
-  output$game <- renderPlot({   
-    plotGrid(game$g1,showState = TRUE)
-  })
-  
-  output$score <- renderTable(
-    head(game$results, 3)
-  )
-  
-  output$grid<-renderPlot({
-    g2 = newGrid(step = input$step,
-                 puddle = input$puddle,
-                 goal = input$goal,
-                 noise = (1-input$noise))
-    # evaluating the checkbox 
-    if(input$solution){
-      # using the solveGridWorld funciton to create the arrows
-      plotGrid(g2,policy=solvePolIter(g2))
-    }else{
-      plotGrid(g2,showState = TRUE)
-    }
-  })
-})
-
-#############################################################################
+# #############################################################################
+# 
+# shinyServer(function(input,output){
+#   
+#   game <- reactiveValues()
+#   game$g1 <- newGrid()
+#   game$score <- 0
+#   game$results <- data.frame(Try = "Start", Action = "NA", Reward = 0, Score = 0, stringsAsFactors = F)
+#   game$policy <- NULL
+#   
+#   observeEvent(input$upButton,{
+#     ns <- nextStep(1,game$g1)
+#     game$g1 <- ns$g
+#     game$score <- game$score + game$g1$r[game$g1$s[1],game$g1$s[2]]
+#     game$results <- rbind(c("Up", ns$name, game$g1$r[game$g1$s[1],game$g1$s[2]], game$score), game$results)
+#   })
+#   
+#   observeEvent(input$leftButton,{
+#     ns <- nextStep(4,game$g1)
+#     game$g1 <- ns$g
+#     game$score <- game$score + game$g1$r[game$g1$s[1],game$g1$s[2]]
+#     game$results <- rbind(c("Left", ns$name, game$g1$r[game$g1$s[1],game$g1$s[2]], game$score), game$results)
+#   })
+#   
+#   observeEvent(input$rightButton,{
+#     ns <- nextStep(2,game$g1)
+#     game$g1 <- ns$g
+#     game$score <- game$score + game$g1$r[game$g1$s[1],game$g1$s[2]]
+#     game$results <- rbind(c("Right", ns$name, game$g1$r[game$g1$s[1],game$g1$s[2]], game$score), game$results)
+#   })
+#   
+#   observeEvent(input$downButton,{
+#     ns <- nextStep(3,game$g1)
+#     game$g1 <- ns$g
+#     game$score <- game$score + game$g1$r[game$g1$s[1],game$g1$s[2]]
+#     game$results <- rbind(c("Down", ns$name, game$g1$r[game$g1$s[1],game$g1$s[2]], game$score), game$results)
+#   })
+#   
+#   observeEvent(input$resetButton,{
+#     game$g1 <- newGrid()
+#     game$score <- 0
+#     game$results <- data.frame(try = "start", action = "NA", reward = 0, Score = 0, stringsAsFactors = F)
+#   })
+#   
+#   output$game <- renderPlot({   
+#     plotGrid(game$g1,showState = TRUE)
+#   })
+#   
+#   output$score <- renderTable(
+#     head(game$results, 3)
+#   )
+#   
+#   output$grid<-renderPlot({
+#     g2 = newGrid(step = input$step,
+#                  puddle = input$puddle,
+#                  goal = input$goal,
+#                  noise = (1-input$noise))
+#     # evaluating the checkbox 
+#     if(input$solution){
+#       # using the solveGridWorld funciton to create the arrows
+#       plotGrid(g2,policy=solvePolIter(g2))
+#     }else{
+#       plotGrid(g2,showState = TRUE)
+#     }
+#   })
+# })
+# 
+# #############################################################################

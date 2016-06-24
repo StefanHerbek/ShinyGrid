@@ -5,13 +5,18 @@ source("solveGridWorld.R")
 shinyServer(function(input, output) {
   
   game <- reactiveValues()
-  game$g1 <- newGrid(noise = .3)
+  game$g1 <- newGrid(noise = .4)
   game$score <- 0
   game$results <- data.frame(Try = "start", Action = "NA", Reward = 0, Score = 0, stringsAsFactors = F)
   output$game<-renderPlot({
-    
+
     plotGrid(game$g1,showState = TRUE)
 
+  })
+  
+  observeEvent(input$trans1,{
+
+    game$g1 <- newGrid(noise = as.numeric(input$trans1))
   })
   
   observeEvent(input$upButton,{
@@ -55,11 +60,12 @@ shinyServer(function(input, output) {
   
 
   output$grid<-renderPlot({
-    
-    g2 = newGrid(step = input$step, puddle = input$puddle, goal = input$goal, noise = (1-input$noise))
+
+    g2 = newGrid(step = input$step, puddle = input$puddle, goal = input$goal, noise = as.numeric(input$trans2))
     if(input$solution){
       plotGrid(g2,policy=solvePolIter(g2))
       # plotGrid(g2,policy=polUpdate(solveValueIter(g2, method = "Fast"), g2))
+      # plotGrid(g2,policy=solveValueIter(g2, method = "Fast"))
     }else{
       plotGrid(g2,showState = TRUE)
     }
