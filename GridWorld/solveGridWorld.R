@@ -1,9 +1,8 @@
 
-library(Rcpp)
-library(RcppArmadillo)
+# library(Rcpp)
+# library(RcppArmadillo)
 
-
-sourceCpp("valueIt.cpp")
+# Rcpp::sourceCpp("valueIt.cpp")
 
 
 tForPolicy<-function(policy,g){
